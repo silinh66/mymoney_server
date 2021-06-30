@@ -262,8 +262,8 @@ app.put("/mymoney", function (req, res) {
 
 //  Delete data
 app.delete("/mymoney", function (req, res) {
-  console.log("req.body", req.body);
-  let data_id = req.body.data_id;
+  console.log("req.query", req.query);
+  let data_id = req.query.data_id;
   console.log("data_id", data_id);
   if (!data_id) {
     return res
@@ -294,6 +294,42 @@ app.delete("/mymoney/all", function (req, res) {
       message: "Delete all data successfully",
     });
   });
+});
+
+//Login
+app.get("/login", function (req, res) {
+  let username = req.query.username;
+  let password = req.query.password;
+  // console.log("date", date);
+  dbMyMoney.query(
+    "Select user_id, count(*) as count from user  where user_name = ? && password = ? GROUP BY user_id ",
+    [username, password],
+    function (error, results, fields) {
+      if (error) {
+        console.log("error", error);
+        throw error;
+      }
+      return res.send({ error: false, data: results, message: "data list." });
+    }
+  );
+});
+
+//Register
+app.get("/register", function (req, res) {
+  let username = req.query.username;
+  let password = req.query.password;
+  // console.log("date", date);
+  dbMyMoney.query(
+    "Insert into  user values  (?, ?, ?)",
+    [null, username, password],
+    function (error, results, fields) {
+      if (error) {
+        console.log("error", error);
+        throw error;
+      }
+      return res.send({ error: false, data: results, message: "data list." });
+    }
+  );
 });
 
 module.exports = app;
